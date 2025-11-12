@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BMI Calculator App (React JS)</title>
+    <!-- React & Babel CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input[type='number'] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        margin-top: 20px;
+        padding: 15px;
+        border-top: 2px solid #eee;
+        text-align: center;
+      }
+
+      .results p {
+        margin: 5px 0;
+      }
+
+      .status-text {
+        font-weight: bold;
+      }
+
+      .underweight {
+        color: #007bff;
+      }
+
+      .normal-weight {
+        color: #28a745;
+      }
+
+      .overweight {
+        color: #ffc107;
+      }
+
+      .obese {
+        color: #dc3545;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState } = React;
+
+      function BMICalculator() {
+        const [height, setHeight] = useState('');
+        const [weight, setWeight] = useState('');
+        const [bmi, setBmi] = useState(null);
+        const [status, setStatus] = useState('');
+
+        const calculateBmi = () => {
+          if (!height || !weight || height <= 0 || weight <= 0) {
+            alert('Please enter valid positive values for height and weight.');
+            return;
+          }
+
+          const heightInMeters = height / 100;
+          const calculatedBmi = weight / (heightInMeters * heightInMeters);
+          setBmi(calculatedBmi.toFixed(2));
+          determineStatus(calculatedBmi);
+        };
+
+        const determineStatus = (bmiValue) => {
+          if (bmiValue < 18.5) {
+            setStatus('Underweight');
+          } else if (bmiValue >= 18.5 && bmiValue <= 24.9) {
+            setStatus('Normal weight');
+          } else if (bmiValue >= 25 && bmiValue <= 29.9) {
+            setStatus('Overweight');
+          } else {
+            setStatus('Obese');
+          }
+        };
+
+        const getStatusClassName = () => {
+          switch (status) {
+            case 'Underweight':
+              return 'underweight';
+            case 'Normal weight':
+              return 'normal-weight';
+            case 'Overweight':
+              return 'overweight';
+            case 'Obese':
+              return 'obese';
+            default:
+              return '';
+          }
+        };
+
+        return (
+          <div className="container">
+            <h1>BMI Calculator</h1>
+            <div className="input-group">
+              <label htmlFor="height">Height (in cm):</label>
+              <input
+                id="height"
+                type="number"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+                placeholder="Enter height"
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="weight">Weight (in kg):</label>
+              <input
+                id="weight"
+                type="number"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                placeholder="Enter weight"
+              />
+            </div>
+            <button onClick={calculateBmi}>Calculate BMI</button>
+            {bmi && (
+              <div className="results">
+                <p>Your BMI is: <strong>{bmi}</strong></p>
+                <p>
+                  Status:
+                  <span className={`status-text ${getStatusClassName()}`}>
+                    {' '}
+                    {status}
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<BMICalculator />);
+    </script>
+  </body>
+
+</html>
